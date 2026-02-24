@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Cadendar() {
+export default function Cadendar({ onSelect }) {
   console.log("calendar");
   const months = [
     "January",
@@ -88,12 +88,20 @@ export default function Cadendar() {
         {days.map((day, idx) => {
           if (day.getMonth() !== currMonth) {
             return (
-              <div key={idx} className="text-gray-600">
+              <div
+                key={day.toLocaleDateString()}
+                onClick={(e) => onSelect(e)}
+                className="text-gray-600"
+              >
                 {day.getDate()}
               </div>
             );
           }
-          return <div key={idx}>{day.getDate()}</div>;
+          return (
+            <div key={day.toLocaleDateString()} onClick={(e) => onSelect(e)}>
+              {day.getDate()}
+            </div>
+          );
         })}
       </div>
     </div>
