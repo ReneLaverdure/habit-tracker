@@ -13,13 +13,20 @@ export function Welcome() {
 
   const handleActiveDate = (event) => {
     console.log("button pressed");
-    console.log(event);
+    console.log(event.target.dataset.date);
+    const newDate = event.target.dataset.date;
+    setActiveDate((prev) => (prev = new Date(newDate)));
+    // event.target.className = "bg-red-500";
   };
 
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
-        <Calendar onSelect={handleActiveDate} />
+        <Calendar
+          onSelect={handleActiveDate}
+          currentDate={currDate}
+          activeDate={activeDate}
+        />
       </div>
     </main>
   );

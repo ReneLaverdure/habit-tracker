@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Cadendar({ onSelect }) {
+export default function Cadendar({ onSelect, currentDate, activeDate }) {
   console.log("calendar");
   const months = [
     "January",
@@ -97,8 +97,35 @@ export default function Cadendar({ onSelect }) {
               </div>
             );
           }
+          if (day.toLocaleDateString() === currentDate.toLocaleDateString()) {
+            return (
+              <div
+                key={day.toLocaleDateString()}
+                onClick={(e) => onSelect(e)}
+                className="bg-amber-400"
+              >
+                {day.getDate()}
+              </div>
+            );
+          }
+
+          if (day.toLocaleDateString() === activeDate.toLocaleDateString()) {
+            return (
+              <div
+                key={day.toLocaleDateString()}
+                onClick={(e) => onSelect(e)}
+                className="bg-red-500"
+              >
+                {day.getDate()}
+              </div>
+            );
+          }
           return (
-            <div key={day.toLocaleDateString()} onClick={(e) => onSelect(e)}>
+            <div
+              data-date={day}
+              key={day.toLocaleDateString()}
+              onClick={(e) => onSelect(e)}
+            >
               {day.getDate()}
             </div>
           );
