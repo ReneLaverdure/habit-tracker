@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 export default function Cadendar({ onSelect, currentDate, activeDate }) {
-  console.log("calendar");
   const months = [
     "January",
     "February",
@@ -50,23 +49,21 @@ export default function Cadendar({ onSelect, currentDate, activeDate }) {
   };
 
   let days = getDaysInMonth(currMonth, year);
-  console.log(days);
-  console.log(months[currMonth]);
-  console.log(days[0].getDay());
+  // console.log(days);
+  // console.log(months[currMonth]);
+  // console.log(days[0].getDay());
 
   let missingFront = days[0].getDay();
-  console.log(missingFront);
+  // console.log(missingFront);
   let holdingDate = new Date(days[0]);
-  console.log("HOLDIng date", holdingDate);
+  // console.log("HOLDIng date", holdingDate);
 
   while (missingFront) {
     holdingDate.setDate(holdingDate.getDate() - 1);
-    console.log(holdingDate);
+    // console.log(holdingDate);
     days.unshift(new Date(holdingDate));
     missingFront--;
   }
-
-  console.log(days);
 
   return (
     <div>
@@ -76,7 +73,7 @@ export default function Cadendar({ onSelect, currentDate, activeDate }) {
         <button onClick={handleNextMonth}>next</button>
       </header>
 
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-3 place-content-center text-center">
         <h4>Sunday</h4>
         <h4>Monday</h4>
         <h4>Tuesday</h4>
@@ -88,21 +85,18 @@ export default function Cadendar({ onSelect, currentDate, activeDate }) {
         {days.map((day, idx) => {
           if (day.getMonth() !== currMonth) {
             return (
-              <div
-                key={day.toLocaleDateString()}
-                onClick={(e) => onSelect(e)}
-                className="text-gray-600"
-              >
-                {day.getDate()}
+              <div key={day.toLocaleDateString()} className="text-gray-600">
+                <p className="text-center rounded-lg p-2">{day.getDate()}</p>
               </div>
             );
           }
           if (day.toLocaleDateString() === currentDate.toLocaleDateString()) {
             return (
               <div
+                data-date={day}
                 key={day.toLocaleDateString()}
                 onClick={(e) => onSelect(e)}
-                className="bg-amber-400"
+                className="bg-amber-400 text-center rounded-lg p-2"
               >
                 {day.getDate()}
               </div>
@@ -112,9 +106,10 @@ export default function Cadendar({ onSelect, currentDate, activeDate }) {
           if (day.toLocaleDateString() === activeDate.toLocaleDateString()) {
             return (
               <div
+                data-date={day}
                 key={day.toLocaleDateString()}
                 onClick={(e) => onSelect(e)}
-                className="bg-red-500"
+                className="bg-red-500 rounded-lg p-2 text-center"
               >
                 {day.getDate()}
               </div>
@@ -125,6 +120,7 @@ export default function Cadendar({ onSelect, currentDate, activeDate }) {
               data-date={day}
               key={day.toLocaleDateString()}
               onClick={(e) => onSelect(e)}
+              className="text-center rounded-lg p-2"
             >
               {day.getDate()}
             </div>
