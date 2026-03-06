@@ -33,8 +33,6 @@ export function Welcome() {
 
   const habitsList: Habit[] =
     habitsCollection[activeDate.toLocaleDateString()] ?? [];
-  console.log("todays habits list", habitsList);
-  console.log(habitsCollection);
 
   const handleActiveDate = (event: MouseEvent<HTMLButtonElement>) => {
     const newDate = event.currentTarget.dataset.date;
@@ -54,7 +52,6 @@ export function Welcome() {
           ];
           return;
         }
-        console.log(draft);
         draft[currentDate].push({
           name: currHabit,
           completed: false,
@@ -75,7 +72,6 @@ export function Welcome() {
         if (!draft[dateKey]) return;
 
         const idx = draft[dateKey].findIndex((habit) => habit.id === id);
-        console.log("deleting habit", idx);
         draft[dateKey].splice(idx, 1);
       }),
     );
