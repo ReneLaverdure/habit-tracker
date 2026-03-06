@@ -1,38 +1,52 @@
-import { useState, type MouseEvent } from "react";
+import {
+  useState,
+  type ChangeEvent,
+  type SubmitEvent,
+  type MouseEvent,
+} from "react";
 import { v4 as genId } from "uuid";
-import { produce } from "immer";
+import { produce, type Draft } from "immer";
 
 import Calendar from "../components/calendar";
 import Habits from "../components/habits";
 import HabitsList from "../components/habitsList";
 
+interface HabitCollection {
+  [date: string]: Habit[] | undefined;
+}
+
+interface Habit {
+  name: string;
+  completed: boolean;
+  id: string;
+}
+
 export function Welcome() {
-  const [currDate, setCurrDate] = useState(new Date());
-  const [activeDate, setActiveDate] = useState(currDate);
+  const currDate = new Date();
+  const [activeDate, setActiveDate] = useState<Date>(currDate);
 
   const [currHabit, setCurrHabit] = useState("");
   const [editingInput, setEditingInput] = useState("");
-  const [habitsCollection, setHabitsCollection] = useState({});
+  const [habitsCollection, setHabitsCollection] = useState<HabitCollection>({});
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState("");
 
-  const habitsList = habitsCollection[activeDate.toLocaleDateString()] || [];
+  const habitsList: Habit[] =
+    habitsCollection[activeDate.toLocaleDateString()] ?? [];
   console.log("todays habits list", habitsList);
   console.log(habitsCollection);
 
   const handleActiveDate = (event: MouseEvent<HTMLButtonElement>) => {
-    // console.log("button pressed");
-    // console.log(event.target.dataset.date);
-    const newDate = event.target.dataset.date;
-    setActiveDate((prev) => (prev = new Date(newDate)));
-    // event.target.className = "bg-red-500";
+    const newDate = event.currentTarget.dataset.date;
+    if (!newDate) return;
+    setActiveDate(() => new Date(newDate));
   };
 
-  const onSubmitHabit = (e) => {
+  const onSubmitHabit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setHabitsCollection(
-      produce((draft) => {
+      produce((draft: Draft<HabitCollection>) => {
         const currentDate = activeDate.toLocaleDateString();
         if (draft[currentDate] === undefined) {
           draft[currentDate] = [
@@ -50,42 +64,50 @@ export function Welcome() {
     );
   };
 
-  const handleAddedHabit = (event) => {
-    setCurrHabit((prev) => event.target.value);
+  const handleAddedHabit = (event: ChangeEvent<HTMLInputElement>) => {
+    setCurrHabit(() => event.target.value);
   };
 
-  const handleDeleteHabit = (id) => {
+  const handleDeleteHabit = (id: string) => {
     setHabitsCollection(
-      produce((draft) => {
-        const idx = draft[activeDate.toLocaleDateString()].findIndex(
-          (habit) => habit.id === id,
-        );
+      produce((draft: Draft<HabitCollection>) => {
+        const dateKey = activeDate.toLocaleDateString();
+        if (!draft[dateKey]) return;
+
+        const idx = draft[dateKey].findIndex((habit) => habit.id === id);
         console.log("deleting habit", idx);
-        draft[activeDate.toLocaleDateString()].splice(idx, 1);
+        draft[dateKey].splice(idx, 1);
       }),
     );
   };
 
-  const handleIsEditing = (id) => {
+  const handleIsEditing = (id: string) => {
     setIsEditing(!isEditing);
     setEditingId(id);
-    setEditingInput((prev) => {
-      let habit = habitsCollection[activeDate.toLocaleDateString()].find(
-        (item) => item.id === id,
+    setEditingInput((): string => {
+      const dateKey = activeDate.toLocaleDateString();
+      if (!habitsCollection[dateKey]) return "";
+
+      let habit = habitsCollection[dateKey].find(
+        (item: Habit) => item.id === id,
       );
-      console.log("single update name", habit);
+
+      if (!habit) return "";
       return habit.name;
     });
   };
 
-  const handleEditingInput = (e) => {
-    setEditingInput((prev) => e.target.value);
+  const handleEditingInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setEditingInput(() => e.target.value);
   };
 
-  const handleEdit = (id) => {
+  const handleEdit = (id: string) => {
     setHabitsCollection(
-      produce((draft) => {
-        draft[activeDate.toLocaleDateString()].forEach((item) => {
+      produce((draft: Draft<HabitCollection>) => {
+        const dateKey = activeDate.toLocaleDateString();
+        if (!draft[dateKey]) return;
+
+        draft[dateKey].forEach((item) => {
           if (item.id === id) {
             item.name = editingInput;
           }
@@ -95,10 +117,13 @@ export function Welcome() {
     setIsEditing(!isEditing);
   };
 
-  const handleDoneHabit = (id) => {
+  const handleDoneHabit = (id: string) => {
     setHabitsCollection(
-      produce((draft) => {
-        draft[activeDate.toLocaleDateString()].forEach((element) => {
+      produce((draft: Draft<HabitCollection>) => {
+        const dateKey = activeDate.toLocaleDateString();
+        if (!draft[dateKey]) return;
+
+        draft[dateKey].forEach((element) => {
           if (element.id === id) {
             element.completed = !element.completed;
           }
@@ -117,8 +142,8 @@ export function Welcome() {
         />
         <div>
           <Habits
-            handleHabbitInput={handleAddedHabit}
-            currentHabbit={currHabit}
+            handleHabitInput={handleAddedHabit}
+            currentHabit={currHabit}
             onSubmitHabit={onSubmitHabit}
           />
           <HabitsList

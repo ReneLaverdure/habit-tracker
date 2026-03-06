@@ -1,6 +1,15 @@
 import { useState } from "react";
 
-export default function Cadendar({ onSelect, currentDate, activeDate }) {
+interface Calendar {
+  onSelect: Function;
+  currentDate: Date;
+  activeDate: Date;
+}
+export default function Cadendar({
+  onSelect,
+  currentDate,
+  activeDate,
+}: Calendar) {
   const months = [
     "January",
     "February",
@@ -18,7 +27,6 @@ export default function Cadendar({ onSelect, currentDate, activeDate }) {
 
   const [currDate, setCurrDate] = useState(new Date());
 
-  // const monthIdx = currDate.getMonth();
   const [currMonth, setCurrMonth] = useState(currDate.getMonth());
   const year = currDate.getFullYear();
 
@@ -49,18 +57,13 @@ export default function Cadendar({ onSelect, currentDate, activeDate }) {
   };
 
   let days = getDaysInMonth(currMonth, year);
-  // console.log(days);
-  // console.log(months[currMonth]);
-  // console.log(days[0].getDay());
 
   let missingFront = days[0].getDay();
-  // console.log(missingFront);
   let holdingDate = new Date(days[0]);
-  // console.log("HOLDIng date", holdingDate);
 
   while (missingFront) {
     holdingDate.setDate(holdingDate.getDate() - 1);
-    // console.log(holdingDate);
+
     days.unshift(new Date(holdingDate));
     missingFront--;
   }
@@ -82,7 +85,7 @@ export default function Cadendar({ onSelect, currentDate, activeDate }) {
         <h4>Friday</h4>
         <h4>Saturday</h4>
 
-        {days.map((day, idx) => {
+        {days.map((day) => {
           if (day.getMonth() !== currMonth) {
             return (
               <div key={day.toLocaleDateString()} className="text-gray-600">
