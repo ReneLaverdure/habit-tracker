@@ -1,18 +1,13 @@
-import type { SubmitEvent } from "react";
+import type { HabitsForm } from "~/types/habits";
 
-interface Habits {
-  handleHabitInput: Function;
-  currentHabit: string;
-  onSubmitHabit: (e: SubmitEvent<HTMLFormElement>) => void;
-}
 export default function Habits({
   handleHabitInput,
   currentHabit,
   onSubmitHabit,
-}: Habits) {
+}: HabitsForm) {
   return (
     <div className="flex flex-col">
-      <h1>Habits tracker</h1>
+      <h1 className="text-4xl mb-2">Habits tracker</h1>
       <div>
         <form onSubmit={onSubmitHabit}>
           <input
@@ -21,7 +16,12 @@ export default function Habits({
             className="bg-white rounded-2xl text-black p-2"
             type="text"
           />
-          <button type="submit">add Habbit</button>
+          <button
+            className="ml-3 p-2 px-5 rounded-2xl outline-white outline-3"
+            type="submit"
+          >
+            Add Habbit
+          </button>
         </form>
       </div>
     </div>

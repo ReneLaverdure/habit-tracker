@@ -3,6 +3,7 @@ import {
   type ChangeEvent,
   type SubmitEvent,
   type MouseEvent,
+  useRef,
 } from "react";
 import { v4 as genId } from "uuid";
 import { produce, type Draft } from "immer";
@@ -11,15 +12,7 @@ import Calendar from "../components/calendar";
 import Habits from "../components/habits";
 import HabitsList from "../components/habitsList";
 
-interface HabitCollection {
-  [date: string]: Habit[] | undefined;
-}
-
-interface Habit {
-  name: string;
-  completed: boolean;
-  id: string;
-}
+import type { Habit, HabitCollection } from "../types/habits.ts";
 
 export function Welcome() {
   const currDate = new Date();
@@ -30,6 +23,8 @@ export function Welcome() {
   const [habitsCollection, setHabitsCollection] = useState<HabitCollection>({});
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState("");
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const habitsList: Habit[] =
     habitsCollection[activeDate.toLocaleDateString()] ?? [];
@@ -59,6 +54,7 @@ export function Welcome() {
         });
       }),
     );
+    setCurrHabit("");
   };
 
   const handleAddedHabit = (event: ChangeEvent<HTMLInputElement>) => {
@@ -77,8 +73,11 @@ export function Welcome() {
     );
   };
 
-  const handleIsEditing = (id: string) => {
+  const handleIsEditing = () => {
     setIsEditing(!isEditing);
+  };
+
+  const handleEditingInputValue = (id: string) => {
     setEditingId(id);
     setEditingInput((): string => {
       const dateKey = activeDate.toLocaleDateString();
@@ -92,12 +91,13 @@ export function Welcome() {
       return habit.name;
     });
   };
-
   const handleEditingInput = (e: ChangeEvent<HTMLInputElement>) => {
     setEditingInput(() => e.target.value);
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = (e: SubmitEvent<HTMLFormElement>, id: string) => {
+    e.preventDefault();
+    console.log("editing input result:", editingInput);
     setHabitsCollection(
       produce((draft: Draft<HabitCollection>) => {
         const dateKey = activeDate.toLocaleDateString();
@@ -128,6 +128,17 @@ export function Welcome() {
     );
   };
 
+  const editingProps = {
+    isEditing,
+    handleEditing: handleIsEditing,
+    handleEdit,
+    handleEditingInputValue,
+    handleEditingInput,
+    editingInput,
+    editingId,
+    inputRef,
+  };
+
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
@@ -146,12 +157,7 @@ export function Welcome() {
             habits={habitsList}
             handleDone={handleDoneHabit}
             handleDelete={handleDeleteHabit}
-            isEditing={isEditing}
-            handleEditing={handleIsEditing}
-            handleEdit={handleEdit}
-            handleEditingInput={handleEditingInput}
-            editingInput={editingInput}
-            editingId={editingId}
+            {...editingProps}
           />
         </div>
       </div>

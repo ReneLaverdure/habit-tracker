@@ -1,10 +1,6 @@
 import { useState } from "react";
+import type { Calendar } from "../types/calendar.ts";
 
-interface Calendar {
-  onSelect: Function;
-  currentDate: Date;
-  activeDate: Date;
-}
 export default function Cadendar({
   onSelect,
   currentDate,
