@@ -1,74 +1,22 @@
-import { useState } from "react";
 import type { Calendar } from "../types/calendar.ts";
+import useCalendar from "~/context/CalendarContext.js";
 
-export default function Cadendar({
-  onSelect,
-  currentDate,
-  activeDate,
-}: Calendar) {
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  const [currDate, setCurrDate] = useState(new Date());
-
-  const [currMonth, setCurrMonth] = useState(currDate.getMonth());
-  const year = currDate.getFullYear();
-
-  const handleNextMonth = () => {
-    setCurrMonth((prev) => {
-      if (prev === 11) {
-        return 0;
-      }
-      return prev + 1;
-    });
-  };
-  const handlePrevMonth = () => {
-    setCurrMonth((prev) => {
-      if (prev === 0) {
-        return 11;
-      }
-      return prev - 1;
-    });
-  };
-  const getDaysInMonth = (month: number, year: number) => {
-    let date = new Date(year, month, 1);
-    let days = [];
-    while (date.getMonth() === month) {
-      days.push(new Date(date));
-      date.setDate(date.getDate() + 1);
-    }
-    return days;
-  };
-
-  let days = getDaysInMonth(currMonth, year);
-
-  let missingFront = days[0].getDay();
-  let holdingDate = new Date(days[0]);
-
-  while (missingFront) {
-    holdingDate.setDate(holdingDate.getDate() - 1);
-
-    days.unshift(new Date(holdingDate));
-    missingFront--;
-  }
+export default function Cadendar({ activeDate }: Calendar) {
+  const {
+    currentDate,
+    currentMonth,
+    handleActiveDate,
+    handlePrevMonth,
+    handleNextMonth,
+    days,
+    months,
+  } = useCalendar();
 
   return (
     <div>
       <header className="flex justify-between">
         <button onClick={handlePrevMonth}>previous</button>
-        <h1>{months[currMonth]}</h1>
+        <h1>{months[currentMonth]}</h1>
         <button onClick={handleNextMonth}>next</button>
       </header>
 
@@ -81,8 +29,8 @@ export default function Cadendar({
         <h4>Friday</h4>
         <h4>Saturday</h4>
 
-        {days.map((day) => {
-          if (day.getMonth() !== currMonth) {
+        {days.map((day: Date) => {
+          if (day.getMonth() !== currentMonth) {
             return (
               <div key={day.toLocaleDateString()} className="text-gray-600">
                 <p className="text-center rounded-lg p-2">{day.getDate()}</p>
@@ -94,7 +42,7 @@ export default function Cadendar({
               <div
                 data-date={day}
                 key={day.toLocaleDateString()}
-                onClick={(e) => onSelect(e)}
+                onClick={(e) => handleActiveDate(e)}
                 className="bg-amber-400 text-center rounded-lg p-2"
               >
                 {day.getDate()}
@@ -107,7 +55,7 @@ export default function Cadendar({
               <div
                 data-date={day}
                 key={day.toLocaleDateString()}
-                onClick={(e) => onSelect(e)}
+                onClick={(e) => handleActiveDate(e)}
                 className="bg-red-500 rounded-lg p-2 text-center"
               >
                 {day.getDate()}
@@ -118,7 +66,7 @@ export default function Cadendar({
             <div
               data-date={day}
               key={day.toLocaleDateString()}
-              onClick={(e) => onSelect(e)}
+              onClick={(e) => handleActiveDate(e)}
               className="text-center rounded-lg p-2"
             >
               {day.getDate()}

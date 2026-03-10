@@ -1,10 +1,4 @@
-import {
-  useState,
-  type ChangeEvent,
-  type SubmitEvent,
-  type MouseEvent,
-  useRef,
-} from "react";
+import { useState, type ChangeEvent, type SubmitEvent, useRef } from "react";
 import { v4 as genId } from "uuid";
 import { produce, type Draft } from "immer";
 
@@ -12,11 +6,12 @@ import Calendar from "../components/calendar";
 import Habits from "../components/habits";
 import HabitsList from "../components/habitsList";
 
+import useCalendar from "~/context/CalendarContext";
+
 import type { Habit, HabitCollection } from "../types/habits.ts";
 
 export function Welcome() {
-  const currDate = new Date();
-  const [activeDate, setActiveDate] = useState<Date>(currDate);
+  const { activeDate } = useCalendar();
 
   const [currHabit, setCurrHabit] = useState("");
   const [editingInput, setEditingInput] = useState("");
@@ -28,12 +23,6 @@ export function Welcome() {
 
   const habitsList: Habit[] =
     habitsCollection[activeDate.toLocaleDateString()] ?? [];
-
-  const handleActiveDate = (event: MouseEvent<HTMLButtonElement>) => {
-    const newDate = event.currentTarget.dataset.date;
-    if (!newDate) return;
-    setActiveDate(() => new Date(newDate));
-  };
 
   const onSubmitHabit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -76,7 +65,8 @@ export function Welcome() {
   const handleIsEditing = () => {
     setIsEditing(!isEditing);
   };
-
+  {
+  }
   const handleEditingInputValue = (id: string) => {
     setEditingId(id);
     setEditingInput((): string => {
@@ -97,7 +87,6 @@ export function Welcome() {
 
   const handleEdit = (e: SubmitEvent<HTMLFormElement>, id: string) => {
     e.preventDefault();
-    console.log("editing input result:", editingInput);
     setHabitsCollection(
       produce((draft: Draft<HabitCollection>) => {
         const dateKey = activeDate.toLocaleDateString();
@@ -142,11 +131,7 @@ export function Welcome() {
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
-        <Calendar
-          onSelect={handleActiveDate}
-          currentDate={currDate}
-          activeDate={activeDate}
-        />
+        <Calendar activeDate={activeDate} />
         <div>
           <Habits
             handleHabitInput={handleAddedHabit}
