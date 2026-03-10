@@ -1,24 +1,26 @@
 import type { HabitListItems } from "~/types/habits";
+import useHabits from "~/context/HabitsContext";
 
-export default function HabitsList({
-  habits,
-  handleDone,
-  handleDelete,
-  handleEditing,
-  isEditing,
-  handleEdit,
-  handleEditingInputValue,
-  handleEditingInput,
-  editingInput,
-  editingId,
-  inputRef,
-}: HabitListItems) {
+export default function HabitsList() {
+  const {
+    habitsList,
+    handleDoneHabit,
+    handleDeleteHabit,
+    isEditing,
+    handleEdit,
+    handleIsEditing,
+    handleEditingInputValue,
+    handleEditingInput,
+    editingInput,
+    editingId,
+    inputRef,
+  } = useHabits();
   const viewMode = (id: string) => (
     <div>
       <button
         className="mr-3 text-amber-500 font-bold"
         onClick={() => {
-          handleEditing();
+          handleIsEditing();
           handleEditingInputValue(id);
         }}
       >
@@ -26,7 +28,7 @@ export default function HabitsList({
       </button>
       <button
         className="text-green-500 font-bold"
-        onClick={() => handleDone(id)}
+        onClick={() => handleDoneHabit(id)}
       >
         Done
       </button>
@@ -35,7 +37,7 @@ export default function HabitsList({
 
   return (
     <div className="block text-black">
-      {habits.map((habit) => {
+      {habitsList.map((habit) => {
         if (habit.completed) {
           return (
             <div
@@ -46,7 +48,7 @@ export default function HabitsList({
               <div>
                 <button
                   className="text-green-500 font-bold"
-                  onClick={() => handleDone(habit.id)}
+                  onClick={() => handleDoneHabit(habit.id)}
                 >
                   Done
                 </button>
@@ -61,6 +63,7 @@ export default function HabitsList({
           >
             {isEditing && editingId === habit.id ? (
               <form
+                className="flex justify-between w-full"
                 onSubmit={(e) => {
                   console.log("submit");
                   handleEdit(e, habit.id);
@@ -71,24 +74,29 @@ export default function HabitsList({
                     inputRef.current = ele;
                     ele?.focus();
                   }}
-                  onBlur={() => setTimeout(() => handleEditing(), 150)}
+                  onBlur={() => setTimeout(() => handleIsEditing(), 150)}
                   value={editingInput}
                   onChange={(e) => handleEditingInput(e)}
                   type="text"
-                  className="bg-white inline-auto focus:outline-0"
+                  className="bg-white  focus:outline-0"
                 />
-                <button className="mr-2 font-bold text-amber-600" type="submit">
-                  Edit
-                </button>
-                <button
-                  className="text-red-600 font-bold"
-                  onClick={() => {
-                    handleEditing();
-                    handleDelete(habit.id);
-                  }}
-                >
-                  Delete
-                </button>
+                <div className="ml-auto">
+                  <button
+                    className="mr-3 font-bold text-amber-600"
+                    type="submit"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className=" text-red-600 font-bold"
+                    onClick={() => {
+                      handleIsEditing();
+                      handleDeleteHabit(habit.id);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
               </form>
             ) : (
               <>

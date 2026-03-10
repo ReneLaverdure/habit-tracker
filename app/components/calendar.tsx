@@ -1,8 +1,9 @@
 import type { Calendar } from "../types/calendar.ts";
 import useCalendar from "~/context/CalendarContext.js";
 
-export default function Cadendar({ activeDate }: Calendar) {
+export default function Cadendar() {
   const {
+    activeDate,
     currentDate,
     currentMonth,
     handleActiveDate,

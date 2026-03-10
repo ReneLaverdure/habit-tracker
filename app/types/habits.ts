@@ -9,20 +9,16 @@ export interface Habit {
   id: string;
 }
 
-export interface HabitsForm {
-  handleHabitInput: Function;
+export interface HabitListItems {
+  habitsList: Habit[];
+  handleDoneHabit: (id: string) => void;
+  handleAddedHabit: (e: ChangeEvent<HTMLInputElement>) => void;
+  handleDeleteHabit: (id: string) => void;
   currentHabit: string;
   onSubmitHabit: (e: SubmitEvent<HTMLFormElement>) => void;
-}
-
-export interface HabitListItems {
-  habits: Habit[];
-  handleDone: (id: string) => void;
-  handleDelete: (id: string) => void;
-
   isEditing: boolean;
   handleEditingInputValue: (id: string) => void;
-  handleEditing: () => void;
+  handleIsEditing: () => void;
   handleEdit: (e: SubmitEvent<HTMLFormElement>, id: string) => void;
   handleEditingInput: (e: ChangeEvent<HTMLInputElement>) => void;
   editingInput: string;

@@ -1,10 +1,7 @@
-import type { HabitsForm } from "~/types/habits";
+import useHabits from "~/context/HabitsContext";
 
-export default function Habits({
-  handleHabitInput,
-  currentHabit,
-  onSubmitHabit,
-}: HabitsForm) {
+export default function Habits() {
+  const { handleAddedHabit, currentHabit, onSubmitHabit } = useHabits();
   return (
     <div className="flex flex-col">
       <h1 className="text-4xl mb-2">Habits tracker</h1>
@@ -12,7 +9,7 @@ export default function Habits({
         <form onSubmit={onSubmitHabit}>
           <input
             value={currentHabit}
-            onChange={(e) => handleHabitInput(e)}
+            onChange={(e) => handleAddedHabit(e)}
             className="bg-white rounded-2xl text-black p-2"
             type="text"
           />
