@@ -3,6 +3,7 @@ import {
   createContext,
   useContext,
   useRef,
+  useEffect,
   type PropsWithChildren,
   type SubmitEvent,
   type ChangeEvent,
@@ -29,6 +30,68 @@ export function HabitsProvider({ children }: PropsWithChildren) {
   const inputRef = useRef<HTMLInputElement>(null);
   const habitsList: Habit[] =
     habitsCollection[activeDate.toLocaleDateString()] ?? [];
+  //
+  // const dbRef = useRef<IDBDatabase | null>(null);
+  // const [isReady, setIsReady] = useState(false);
+  //
+  // useEffect(() => {
+  //   let db;
+  //   const request = indexedDB.open("habitDb", 2);
+  //
+  //   request.onerror = (event) => {
+  //     console.error("indexed db is unable to connect");
+  //   };
+  //
+  //   request.onsuccess = (event) => {
+  //     dbRef.current = (event.target as IDBDatabase).result;
+  //     setIsReady(true);
+  //   };
+  //
+  //   return () => {};
+  // }, []);
+  //
+  // if (!isReady) return null;
+
+  // console.log(habitsCollection);
+
+  // Stats trackers
+  const [completedTotal, setCompletedTotal] = useState(0);
+  let habitMap = new Map();
+
+  let totalCompleteDays = 0;
+  let habitsSet = new Set();
+
+  const countTotalDay = () => {
+    let total = 0;
+    for (const day in habitsCollection) {
+      let result = habitsCollection[day]?.every(
+        (habit) => habit.completed === true,
+      );
+
+      habitsCollection[day]?.forEach((item) => {
+        if (item.completed) {
+          if (!habitMap.has(item.name)) {
+            habitMap.set(item.name, 1);
+          } else {
+            let num = habitMap.get(item.name) + 1;
+            habitMap.set(item.name, num);
+          }
+        }
+      });
+
+      if (result) {
+        total++;
+      }
+    }
+    totalCompleteDays = total;
+  };
+
+  countTotalDay();
+
+  const highestEntry =
+    Array.from(habitMap).sort((a, b) => b[1] - a[1])[0] || [];
+  const bestHabit = highestEntry[0] || [];
+  console.log(bestHabit);
 
   const onSubmitHabit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -108,6 +171,7 @@ export function HabitsProvider({ children }: PropsWithChildren) {
   };
 
   const handleDoneHabit = (id: string) => {
+    let increase = true;
     setHabitsCollection(
       produce((draft: Draft<HabitCollection>) => {
         const dateKey = activeDate.toLocaleDateString();
@@ -116,10 +180,17 @@ export function HabitsProvider({ children }: PropsWithChildren) {
         draft[dateKey].forEach((element) => {
           if (element.id === id) {
             element.completed = !element.completed;
+
+            increase = element.completed;
           }
         });
       }),
     );
+    if (increase) {
+      setCompletedTotal((prev) => prev + 1);
+    } else {
+      setCompletedTotal((prev) => prev - 1);
+    }
   };
 
   return (
@@ -139,6 +210,9 @@ export function HabitsProvider({ children }: PropsWithChildren) {
         editingInput,
         editingId,
         inputRef,
+        completedTotal,
+        totalCompleteDays,
+        bestHabit,
       }}
     >
       {children}

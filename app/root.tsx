@@ -10,6 +10,8 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
+import Navbar from "./components/navbar";
+
 import { CalendarProvider } from "./context/CalendarContext";
 import { HabitsProvider } from "./context/HabitsContext";
 
@@ -36,6 +38,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <Navbar />
         {children}
         <ScrollRestoration />
         <Scripts />

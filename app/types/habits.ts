@@ -24,4 +24,7 @@ export interface HabitListItems {
   editingInput: string;
   editingId: string;
   inputRef: RefObject<HTMLInputElement | null>;
+  completedTotal: number;
+  totalCompleteDays: number;
+  bestHabit: string;
 }
