@@ -71,8 +71,7 @@ export function HabitsProvider({ children }: PropsWithChildren) {
   const handleIsEditing = () => {
     setIsEditing(!isEditing);
   };
-  {
-  }
+
   const handleEditingInputValue = (id: string) => {
     setEditingId(id);
     setEditingInput((): string => {

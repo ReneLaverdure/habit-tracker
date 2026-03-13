@@ -82,7 +82,7 @@ export default function HabitsList() {
                 />
                 <div className="ml-auto">
                   <button
-                    className="mr-3 font-bold text-amber-600"
+                    className="mr-2 font-bold text-amber-600"
                     type="submit"
                   >
                     Edit
